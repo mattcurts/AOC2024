@@ -14,28 +14,28 @@ def compare(dif):
 import sys
 f = open(sys.argv[1],"r")
 line = f.readline()
-safe = 0
-not_safe = True
+part1 = 0
+part2 = 0
+safe = False
 while(line):
-    nums = line.split()
-    print(nums)
-    dif = [int(nums[i]) - int(nums[i-1]) for i in range(len(nums))]
+    nums = list(map(int,line.split()))
+    dif = [nums[i] - nums[i-1] for i in range(len(nums))]
     dif = dif[1:]
     if(compare(dif) != True):
         for i in range(len(nums)):
             nums1 = [nums[j] for j in range(len(nums)) if j != i]
-            dif1 = [int(nums1[j]) - int(nums1[j-1]) for j in range(len(nums1))]
+            dif1 = [nums1[j] - nums1[j-1] for j in range(len(nums1))]
             dif1 = dif1[1:]
             if(compare(dif1)):
-                not_safe = False
+                safe = True
                 break
     else:
-        not_safe = False
+        safe = True
+        part1 +=1
 
-    if(not not_safe):
-        print("WTF ",nums)
-        safe+=1
+    if(safe):
+        part2 += 1
     line = f.readline()
-    not_safe = True
+    safe = False
 
-print(safe)
+print(part1, part2)
