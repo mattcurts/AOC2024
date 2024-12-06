@@ -2,21 +2,32 @@ import sys
 import re
 
 
-def ordering(order, rule_after,rule_before):
-    rules  = rule_after[order[0]]
+def part2f(order, rule_after):
     for i in range(len(order)):
-        for j in range(i,len(order)-1):# read forward
+        for j in range(len(order)-1):
             try:
                 if(order[j+1] not in rule_after[order[j]]):
-                    print("Bad order")
-                    print(order)
-                    return 0
+                    temp = order[j+1]
+                    order[j+1] = order[j]
+                    order[j] = temp
             except:
-                print("Bad order")
-                print(order)
-                return 0
-    print("good order ", order)
-    return order[len(order)//2]
+                temp = order[j+1]
+                order[j+1] = order[j]
+                order[j] = temp
+    return order
+  
+
+
+def ordering(order, rule_after):
+    rules  = rule_after[order[0]]
+    for i in range(len(order)):
+        for j in range(i,len(order)-1):
+            try:
+                if(order[j+1] not in rule_after[order[j]]):
+                    return 0,order
+            except:
+                    return 0,order
+    return order[len(order)//2], None
                     
 
 def main():
@@ -25,7 +36,6 @@ def main():
     part2 = 0
     with open(sys.argv[1],"r") as f:
         rule_after = {}
-        rule_before = {}
         pages = []
         rules = True
         for l in f.readlines():
@@ -38,26 +48,24 @@ def main():
                     rule_after[l[0]].append(l[1]) # adding to rule list for value
                 else:
                     rule_after[l[0]] =  [l[1]] # first time seeing it
-                if  l[1] in rule_before:
-                    rule_before[l[1]].append(l[0]) # adding to rule list for value
-                else:
-                    rule_before[l[1]] =  [l[0]] # first time seeing it
             else:
                 order = list(map(int,l.strip().split(',')))
                 pages.append(order)
     
-
+    bad_pages = []
     for order in pages:
-        part1 += ordering(order,rule_after,rule_before)
+        val,bad_list = ordering(order,rule_after)
+        part1 += val
+        if(bad_list):
+            bad_pages.append(bad_list)
 
-            
-
+    for pages in bad_pages:
+        fixed = part2f(pages,rule_after)
+        part2+= fixed[len(fixed)//2]
 
     print(part1)
     print(part2)
 
-#    for line in grid:
-        #print(line)
-    #print(part1)
+
 if __name__ ==  "__main__":
     main()
